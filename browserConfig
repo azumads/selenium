@@ -1,0 +1,12 @@
+browsers = [{"platform": "OS X 10.9",
+             "browserName": "chrome",
+             "version": "31",
+             "screenResolution":"1280x1024"},
+            {"platform": "Windows 8.1",
+             "browserName": "internet explorer",
+             "version": "11",
+             "screenResolution":"1280x1024"},
+             {"platform": "OS X 10.11",
+             "browserName": "safari",
+             "version": "9.0",
+             "screenResolution":"2048x1536"}]

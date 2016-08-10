@@ -1,0 +1,9 @@
+host: testing.theplant-dev.com
+db:
+  name: testing
+  adapter: postgres
+  host: idm-demo.clzzdwaruxwa.us-west-1.rds.amazonaws.com
+  user: app
+  password: K3wmm$4p_TdEQ$2JJDF5
+  port: 5432
+
