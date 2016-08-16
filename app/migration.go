@@ -2,7 +2,9 @@ package app
 
 // Tables returns a slice of all tables.
 var Tables = []interface{}{
-	&AutoTest{},
+	&ScheduledTest{},
+	&Project{},
+	&TestCase{},
 }
 
 func init() {

@@ -9,15 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/qor/admin"
-	"github.com/qor/media_library"
 	"github.com/qor/worker"
 )
 
 var Loops = [][]string{
-	{"", "Never"},
+	{"0", "Never"},
 	{"1", "1H"},
 	{"2", "2H"},
 	{"3", "3H"},
@@ -26,19 +23,10 @@ var Loops = [][]string{
 	{"24", "24H"},
 }
 
-type AutoTest struct {
-	gorm.Model
-	Name     string
-	JobId    string
-	LoopHour string
-	NextRun  time.Time
-}
-
-type AutoTestingArgument struct {
-	Name     string
-	Loop     string
-	TestFile media_library.FileSystem
-	CsvFile  media_library.FileSystem
+type RunTestArgument struct {
+	TestCase   TestCase
+	TestCaseID uint
+	Loop       string
 }
 
 const ONCE_WRITE_COUNT = 1000
@@ -46,29 +34,31 @@ const ONCE_WRITE_COUNT = 1000
 func AddWorker() *worker.Worker {
 	Worker := worker.New()
 
-	autoTestingRes := Admin.NewResource(&AutoTestingArgument{})
+	autoTestingRes := Admin.NewResource(&RunTestArgument{})
 	autoTestingRes.Meta(&admin.Meta{
 		Name:   "Loop",
 		Config: &admin.SelectOneConfig{Collection: Loops},
 	})
 
 	Worker.RegisterJob(&worker.Job{
-		Name:     "Auto Testing",
+		Name:     "Run Test",
 		Resource: autoTestingRes,
 		Handler: func(arg interface{}, qorJob worker.QorJobInterface) (err error) {
-			AutoTestingArgument := arg.(*AutoTestingArgument)
-			loop := AutoTestingArgument.Loop
+			RunTestArgument := arg.(*RunTestArgument)
+			tc := TestCase{}
+			DB.Where("id = ?", RunTestArgument.TestCase.ID).Preload("Project").First(&tc)
+			loop := RunTestArgument.Loop
 			intloop, _ := strconv.ParseInt(loop, 10, 0)
 			if intloop != 0 {
-				DB.Create(&AutoTest{
-					Name:     AutoTestingArgument.Name,
-					JobId:    qorJob.GetJobID(),
-					LoopHour: loop,
-					NextRun:  time.Now().Add(time.Duration(intloop) * time.Hour)})
+				DB.Create(&ScheduledTest{
+					TestCase:   tc,
+					TestCaseID: tc.ID,
+					JobId:      qorJob.GetJobID(),
+					LoopHour:   loop,
+					NextRun:    time.Now().Add(time.Duration(intloop) * time.Hour)})
 			}
-			// defer os.Remove(AutoTestingArgument.TestFile.URL())
-			// qorJob.AddLog("./bang.py " + path.Join("public", AutoTestingArgument.TestFile.URL()))
-			out1, err1 := run("./bang.py", []string{path.Join("public", AutoTestingArgument.TestFile.URL())})
+
+			out1, err1 := run("./bang.py", []string{path.Join("public", tc.TestFile.URL())})
 			if err1 != nil {
 				qorJob.AddLog(err1.Error())
 				qorJob.AddLog(out1)
@@ -86,7 +76,7 @@ func AddWorker() *worker.Worker {
 		},
 	})
 
-	Admin.AddResource(Worker)
+	Admin.AddResource(Worker, &admin.Config{Name: "Run test"})
 	return Worker
 }
 

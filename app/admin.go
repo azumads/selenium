@@ -77,10 +77,13 @@ func init() {
 
 	Admin = admin.New(&qor.Config{DB: DB})
 	Admin.SetSiteName("Auto Testing")
-	Admin.AddResource(&AutoTest{})
+	Admin.AddResource(&Project{})
+	Admin.AddResource(&TestCase{})
+	AddWorker()
+	Admin.AddResource(&ScheduledTest{})
+
 	// Admin.SetAuth(Auth{})
 
-	AddWorker()
 }
 
 func HostUrl() string {

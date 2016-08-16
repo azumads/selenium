@@ -43,7 +43,7 @@ func RunAutoTest() {
 			}
 			log.Println("start processing: " + now.String())
 			stats = STATUS_PROCESSING
-			var tests []app.AutoTest
+			var tests []app.ScheduledTest
 			app.DB.Find(&tests)
 			if len(tests) == 0 {
 				stats = STATUS_DONE
