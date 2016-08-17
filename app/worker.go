@@ -61,7 +61,8 @@ func AddWorker() *worker.Worker {
 
 			qorJob.AddLog("start to run project " + RunTestArgument.Project.Name + "'s test cases")
 			for i, tc := range testcases {
-				qorJob.AddLog("\nstart to run test case " + strconv.Itoa(i+1) + ": " + tc.Name)
+				qorJob.AddLog("----------------------------------------------------------------------")
+				qorJob.AddLog("start to run test case " + strconv.Itoa(i+1) + ": " + tc.Name)
 				out1, err1 := run("./bang.py", []string{path.Join("public", tc.TestFile.URL())})
 				if err1 != nil {
 					qorJob.AddLog(err1.Error())
@@ -77,7 +78,9 @@ func AddWorker() *worker.Worker {
 					err = err2
 					return
 				}
-				qorJob.AddLog(out2)
+				qorJob.AddLog(strings.Trim(out2, `...
+----------------------------------------------------------------------`))
+
 			}
 
 			return
