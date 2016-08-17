@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
@@ -17,6 +18,7 @@ import (
 	"github.com/qor/media_library"
 	"github.com/qor/publish"
 	"github.com/qor/qor"
+	"github.com/qor/roles"
 	"github.com/qor/sorting"
 	"github.com/qor/validations"
 )
@@ -74,13 +76,18 @@ func init() {
 	} else {
 		panic(err)
 	}
+	roles.Register("user", func(req *http.Request, currentUser interface{}) bool {
+		return true
+	})
 
 	Admin = admin.New(&qor.Config{DB: DB})
 	Admin.SetSiteName("Auto Testing")
 	Admin.AddResource(&Project{})
 	Admin.AddResource(&TestCase{})
 	AddWorker()
-	Admin.AddResource(&ScheduledTest{})
+	scheduledTest := Admin.AddResource(&ScheduledTest{}, &admin.Config{Permission: roles.Deny(roles.Create, "user")})
+	scheduledTest.Meta(&admin.Meta{Name: "JobId", Permission: roles.Allow(roles.Read, "user")})
+	scheduledTest.Meta(&admin.Meta{Name: "Project", Permission: roles.Allow(roles.Read, "user")})
 
 	// Admin.SetAuth(Auth{})
 
