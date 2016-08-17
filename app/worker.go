@@ -21,12 +21,13 @@ var Loops = [][]string{
 	{"6", "6H"},
 	{"12", "12H"},
 	{"24", "24H"},
+	{"48", "48H"},
 }
 
 type RunTestArgument struct {
-	TestCase   TestCase
-	TestCaseID uint
-	Loop       string
+	Project   Project
+	ProjectID uint
+	Loop      string
 }
 
 const ONCE_WRITE_COUNT = 1000
@@ -45,33 +46,40 @@ func AddWorker() *worker.Worker {
 		Resource: autoTestingRes,
 		Handler: func(arg interface{}, qorJob worker.QorJobInterface) (err error) {
 			RunTestArgument := arg.(*RunTestArgument)
-			tc := TestCase{}
-			DB.Where("id = ?", RunTestArgument.TestCase.ID).Preload("Project").First(&tc)
+			testcases := []TestCase{}
+			DB.Where("project_id = ?", RunTestArgument.Project.ID).Find(&testcases)
 			loop := RunTestArgument.Loop
 			intloop, _ := strconv.ParseInt(loop, 10, 0)
 			if intloop != 0 {
 				DB.Create(&ScheduledTest{
-					TestCase:   tc,
-					TestCaseID: tc.ID,
-					JobId:      qorJob.GetJobID(),
-					LoopHour:   loop,
-					NextRun:    time.Now().Add(time.Duration(intloop) * time.Hour)})
+					Project:   RunTestArgument.Project,
+					ProjectID: RunTestArgument.Project.ID,
+					JobId:     qorJob.GetJobID(),
+					LoopHour:  loop,
+					NextRun:   time.Now().Add(time.Duration(intloop) * time.Hour)})
 			}
 
-			out1, err1 := run("./bang.py", []string{path.Join("public", tc.TestFile.URL())})
-			if err1 != nil {
-				qorJob.AddLog(err1.Error())
-				qorJob.AddLog(out1)
-				err = err1
-				return
+			qorJob.AddLog("start to run project " + RunTestArgument.Project.Name + "'s test cases")
+			for i, tc := range testcases {
+				qorJob.AddLog("\nstart to run test case " + strconv.Itoa(i+1) + ": " + tc.Name)
+				out1, err1 := run("./bang.py", []string{path.Join("public", tc.TestFile.URL())})
+				if err1 != nil {
+					qorJob.AddLog(err1.Error())
+					qorJob.AddLog(out1)
+					err = err1
+					return
+				}
+
+				// qorJob.AddLog(strings.Trim(out1, "\n"))
+				out2, err2 := run(strings.Trim(out1, "\n"), nil)
+				if err2 != nil {
+					qorJob.AddLog(err2.Error())
+					err = err2
+					return
+				}
+				qorJob.AddLog(out2)
 			}
-			qorJob.AddLog(strings.Trim(out1, "\n"))
-			out2, err2 := run(strings.Trim(out1, "\n"), nil)
-			if err2 != nil {
-				qorJob.AddLog(err2.Error())
-				err = err2
-			}
-			qorJob.AddLog(out2)
+
 			return
 		},
 	})

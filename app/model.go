@@ -9,11 +9,11 @@ import (
 
 type ScheduledTest struct {
 	gorm.Model
-	TestCase   TestCase
-	TestCaseID uint
-	JobId      string
-	LoopHour   string
-	NextRun    time.Time
+	Project   Project
+	ProjectID uint
+	JobId     string
+	LoopHour  string
+	NextRun   time.Time
 }
 
 type Project struct {
