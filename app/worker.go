@@ -68,6 +68,7 @@ func AddWorker() *worker.Worker {
 					qorJob.AddLog(err1.Error())
 					qorJob.AddLog(out1)
 					err = err1
+					SendNotifyErrorEmail(RunTestArgument.Project.NotifyEmail, RunTestArgument.Project.Name, tc.Name, qorJob.GetJobID())
 					return
 				}
 
@@ -76,6 +77,7 @@ func AddWorker() *worker.Worker {
 				if err2 != nil {
 					qorJob.AddLog(err2.Error())
 					err = err2
+					SendNotifyErrorEmail(RunTestArgument.Project.NotifyEmail, RunTestArgument.Project.Name, tc.Name, qorJob.GetJobID())
 					return
 				}
 				qorJob.AddLog(strings.Trim(out2, `...
