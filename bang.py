@@ -52,12 +52,27 @@ assertEqualRe = "assertEqual\\(\"(.+?)\","
 def bang():
     args = sys.argv
 
-    if len(args) != 2:
+    if len(args) < 2:
         print "wrong arguments"
         print args
         return
     name = os.path.basename(args[1])
     directory = os.path.dirname(args[1])
+    csvFile = ""
+    ProvideCsv = False
+    if len(args) == 3:
+        csvFile  = args[2]
+
+    if csvFile != "":
+        if os.path.exists(csvFile) != True:
+            print "csv file don't exists"
+            return
+        else:
+            ProvideCsv = True
+
+    if csvFile == "":
+       csvFile =  directory+"/"+name[0:len(name)-3]+".csv"
+
     # print name
     # print directory
     with open("browserConfig", 'r') as f:
@@ -89,7 +104,7 @@ def bang():
                     skip = 2
                 elif val.startswith("        driver = self.driver"):
                     newfile.write(val)
-                    newfile.write("        with open(\""+directory+"/"+name[0:len(name)-3]+".csv\", 'r') as csvfile:\n")
+                    newfile.write("        with open(\"" + csvFile + "\", 'r') as csvfile:\n")
                     newfile.write("            reader = csv.reader(csvfile)\n")
                     newfile.write("            for data in reader:\n") 
                     inTest = True
@@ -122,10 +137,11 @@ def bang():
                     if inTest :
                         newfile.write("        ") 
                     newfile.write(val) 
+    if not ProvideCsv:
+        with open(csvFile, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(row)
 
-    with open(directory+"/"+name[0:len(name)-3]+".csv", 'w') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow(row)
 
     os.chmod(directory+"/B"+name,stat.S_IRWXU)
     print directory+"/B"+name

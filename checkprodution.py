@@ -27,7 +27,7 @@ class Checkproduction(unittest.TestCase):
         driver.find_element_by_link_text("Products").click()
         try: self.assertEqual("QOR Jacket", driver.find_element_by_xpath("//main[@id='content']/div[2]/div/table/tbody/tr[10]/td[2]/div").text)
         except AssertionError as e: self.verificationErrors.append(str(e))
-        # driver.find_element_by_css_selector("a.mdl-navigation__link > i.material-icons").click()
+        driver.find_element_by_css_selector("a.mdl-navigation__link > i.material-icons").click()
     
     def is_element_present(self, how, what):
         try: self.driver.find_element(by=how, value=what)
