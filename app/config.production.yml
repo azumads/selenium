@@ -1,9 +1,9 @@
-host: testing.theplant-dev.com
+host: 192.168.1.203
 db:
-  name: testing
+  name: qa_test
   adapter: postgres
-  host: idm-demo.clzzdwaruxwa.us-west-1.rds.amazonaws.com
-  user: app
-  password: K3wmm$4p_TdEQ$2JJDF5
+  host: 127.0.0.1
+  user: qa_test
+  password: 78@8*RAm5aeGjcsXMAvd
   port: 5432
 

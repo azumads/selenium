@@ -7,14 +7,44 @@ import csv
 import stat
 
 
-imports = '''import new, sys, csv\n'''
-
-
-setups = '''        self.driver = webdriver.Chrome()
-        self.driver.set_window_size(1280, 1024)          
-        self.driver.implicitly_wait(15)
+imports = '''from sauceclient import SauceClient
+import new, sys, csv\n
 '''
 
+onbrowsers = '''browsers = [{"platform": "Mac OS X 10.9",
+             "browserName": "chrome",
+             "version": "31",
+             "screenResolution":"1280x1024"}]'''
+onplatforms = '''
+def on_platforms(platforms):
+    def decorator(base_class):
+        module = sys.modules[base_class.__module__].__dict__
+        for i, platform in enumerate(platforms):
+            d = dict(base_class.__dict__)
+            d['desired_capabilities'] = platform
+            name = "%s_%s" % (base_class.__name__, i + 1)
+            module[name] = new.classobj(name, (base_class,), d)
+    return decorator
+
+@on_platforms(browsers)\n'''
+
+setups = '''        self.desired_capabilities['name'] = self.id()
+        sauce_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub"
+        self.driver = webdriver.Remote(
+            command_executor=sauce_url % ("testsaucelaber", "097cc55a-4c6e-4ee7-bdb9-0868ecb01b72"),
+            desired_capabilities=self.desired_capabilities)
+        self.sauce_client = SauceClient("testsaucelaber", "097cc55a-4c6e-4ee7-bdb9-0868ecb01b72")            
+        self.driver.implicitly_wait(10)
+'''
+
+teardowns = '''        print("Link to your job: https://saucelabs.com/jobs/%s" % self.driver.session_id)
+        try:
+            if sys.exc_info() == (None, None, None):
+                self.sauce_client.jobs.update_job(self.driver.session_id, passed=True)
+            else:
+                self.sauce_client.jobs.update_job(self.driver.session_id, passed=False)
+        finally:
+            self.driver.quit()\n'''
 sendkeyRe = "send_keys\\(\"(.+?)\""
 selectRe = "select_by_visible_text\\(\"(.+?)\""
 assertEqualRe = "assertEqual\\(\"(.+?)\","
@@ -65,8 +95,8 @@ def bang():
                     newfile.write(val)
                 elif val.startswith("class"):
                     newfile.write(imports)
-                #     newfile.write(onbrowsers)
-                #     newfile.write(onplatforms)
+                    newfile.write(onbrowsers)
+                    newfile.write(onplatforms)
                     newfile.write(val)
                 elif val.startswith("    def setUp("):
                     newfile.write(val)
@@ -81,10 +111,10 @@ def bang():
                 elif val.startswith("    def is_element_present"):
                     inTest = False
                     newfile.write(val)
-                # elif val.startswith("    def tearDown(self)"):
-                #     newfile.write(val)
-                #     newfile.write(teardowns)
-                #     skip = 2
+                elif val.startswith("    def tearDown(self)"):
+                    newfile.write(val)
+                    newfile.write(teardowns)
+                    skip = 2
                 elif inTest and val.find("send_keys(")>0:
                     # print re.search(sendkeyRe, val).group(1)
                     newfile.write("        ") 

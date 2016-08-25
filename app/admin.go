@@ -14,7 +14,6 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/qor/admin"
 	"github.com/qor/i18n"
-	"github.com/qor/l10n"
 	"github.com/qor/media_library"
 	"github.com/qor/publish"
 	"github.com/qor/qor"
@@ -69,7 +68,6 @@ func init() {
 		DB = db
 		DB.LogMode(true)
 		Publish = publish.New(DB)
-		l10n.RegisterCallbacks(DB)
 		sorting.RegisterCallbacks(DB)
 		validations.RegisterCallbacks(DB)
 		media_library.RegisterCallbacks(DB)
