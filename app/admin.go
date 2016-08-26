@@ -91,6 +91,10 @@ func init() {
 
 }
 
+func IsProd() bool {
+	return configor.ENV() == "production"
+}
+
 func HostUrl() string {
 	if Config.Host != "80" {
 		return Config.Scheme + "://" + Config.Host + ":" + Config.Port

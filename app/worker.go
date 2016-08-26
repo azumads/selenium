@@ -67,7 +67,11 @@ func AddWorker() *worker.Worker {
 				if tc.CsvFile.URL() != "" {
 					runArgs = append(runArgs, path.Join("public", tc.CsvFile.URL()))
 				}
-				out1, err1 := run("./bang.py", runArgs)
+				script := "./bang.py"
+				if IsProd() {
+					script = "./bang_linux.py"
+				}
+				out1, err1 := run(script, runArgs)
 				if err1 != nil {
 					qorJob.AddLog(err1.Error())
 					qorJob.AddLog(out1)
@@ -84,6 +88,7 @@ func AddWorker() *worker.Worker {
 				if err2 != nil {
 					qorJob.AddLog(err2.Error())
 					err = err2
+					qorJob.AddLog(out2)
 					if RunTestArgument.Project.NotifyEmail != "" {
 						SendNotifyErrorEmail(RunTestArgument.Project.NotifyEmail, RunTestArgument.Project.Name, tc.Name, qorJob.GetJobID())
 					}

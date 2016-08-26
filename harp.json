@@ -5,7 +5,7 @@
 		"name":       "selenium",
 		"importpath": "github.com/azumads/selenium",
 		"envs": {},
-		"DefaultExcludeds": [".git/", "tmp/", ".DS_Store", "node_modules/", "*.swp", "*.go", "*.csv"],
+		"DefaultExcludeds": [".git/", "tmp/", ".DS_Store", "node_modules/", "*.swp", "*.go", "*.csv", "public"],
 		"files":      [
 			"github.com/azumads/selenium",
 			{"path": "github.com/qor", "excludeds": ["qor-example/"], "delete": true}
