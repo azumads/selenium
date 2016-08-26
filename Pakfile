@@ -1,0 +1,33 @@
+# Pakfile[.yaml]
+packages:
+- name: github.com/go-sql-driver/mysql
+- name: github.com/jinzhu/configor
+- name: github.com/jinzhu/gorm
+- name: github.com/lib/pq
+- name: github.com/qor/admin
+- name: github.com/qor/i18n
+- name: github.com/qor/media_library
+- name: github.com/qor/publish
+- name: github.com/qor/qor
+- name: github.com/qor/roles
+- name: github.com/qor/sorting
+- name: github.com/qor/validations
+- name: github.com/qor/worker
+- name: github.com/sendgrid/sendgrid-go
+
+#
+# Configuration Options:
+# - name:
+#   pakname: pak
+#   targetbranch: origin/master
+#
+# Examples:
+#
+# packages:
+# - name: github.com/theplant/req1
+#   pakname: pak
+#   targetbranch: origin/branch1
+# - name: github.com/theplant/req2
+#   pakname: pak
+#   targetbranch: origin/master
+#
