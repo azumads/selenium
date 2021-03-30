@@ -1,0 +1,14 @@
+github.com/go-sql-driver/mysql: d512f204a577a4ab037a1816604c48c9c13210be
+github.com/jinzhu/configor: f740b0b16fc10bacdb09fc3fbac9048aa827e952
+github.com/jinzhu/gorm: 1819dda80ab0963da3ec38f484264c1cab543786
+github.com/lib/pq: 11fc39a580a008f1f39bb3d11d984fb34ed778d9
+github.com/qor/admin: 9d94fdeac2758763643977c8800e965667ac8f1f
+github.com/qor/i18n: f162a4b9035abbd35b13c344e74ee4636bcf2eac
+github.com/qor/media_library: f9d4bf02c817354d420e809383baf9b00db7cc54
+github.com/qor/publish: fe11be6a402dd0f605c426bf2d61c7199cb60cd9
+github.com/qor/qor: 4f88b0f73dff67d696047118283329fde8d35019
+github.com/qor/roles: 2c44eeffba3e666915376605327218afa30bc6ab
+github.com/qor/sorting: 09a8c076495824fb3ba91b2ff3cc0085cf798110
+github.com/qor/validations: aa83180452b83a2325f13a30a2a8f4740c43c792
+github.com/qor/worker: 20258b27e53fe51012fd1aed769e86a8dac35d0e
+github.com/sendgrid/sendgrid-go: 618ae01fc450f11509a8dee37756036780338593

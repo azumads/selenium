@@ -1,0 +1,23 @@
+{
+	"goos": "linux",
+	"goarch": "amd64",
+	"app": {
+		"name":       "selenium",
+		"importpath": "github.com/azumads/selenium",
+		"envs": {},
+		"DefaultExcludeds": [".git/", "tmp/", ".DS_Store", "node_modules/", "*.swp", "*.go", "*.csv", "public"],
+		"files":      [
+			"github.com/azumads/selenium",
+			{"path": "github.com/qor", "excludeds": ["qor-example/"], "delete": true}
+		]
+	},
+	"servers": {
+		"prod": [{
+			"gopath": "/home/qa_test",
+			"user": "qa_test",
+			"host": "192.168.1.203",
+			"envs": {"CONFIGOR_ENV":"production"},
+			"port": ":22"
+		}]
+	}
+}

@@ -1,0 +1,9 @@
+host: 192.168.1.203
+db:
+  name: qa_test
+  adapter: postgres
+  host: 127.0.0.1
+  user: qa_test
+  password: 78@8*RAm5aeGjcsXMAvd
+  port: 5432
+
